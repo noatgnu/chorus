@@ -1,0 +1,20 @@
+# gitingore for django
+#
+
+# Ignore database
+*.sqlite3
+
+# Ignore static files
+staticfiles/
+
+# Ignore text files
+
+
+# Ignore data folder
+data/
+
+# Ignore pycharm
+.idea/
+
+# Ignore pycache
+__pycache__/
