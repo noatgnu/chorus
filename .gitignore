@@ -6,6 +6,7 @@
 *.sqlite3-journal
 # Ignore static files
 staticfiles/
+*.json
 
 # Ignore text files
 

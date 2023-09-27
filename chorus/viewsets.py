@@ -8,10 +8,14 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from chorus.filter_schema import protein_query_schema
-from chorus.models import Protein
-from chorus.serializers import ProteinSerializer
+from chorus.models import Protein, Variant
+from chorus.serializers import ProteinSerializer, VariantSerializer
 
 from uniprotparser.betaparser import UniprotParser
+
+from chorus.utils import extract_functional_domain
+
+
 class ProteinViewSets(FiltersMixin, ModelViewSet):
     queryset = Protein.objects.all()
     serializer_class = ProteinSerializer
@@ -30,23 +34,24 @@ class ProteinViewSets(FiltersMixin, ModelViewSet):
     def get_uniprot(self, request, pk=None):
         protein = self.get_object()
         parser = UniprotParser(columns="accession,id,ft_domain,sequence,gene_names")
-        result = list(parser.parse(protein.name))
+        result = list(parser.parse([protein.name]))
         if len(result) > 0:
             df = pd.read_csv(io.StringIO(result[0]), sep="\t")
-            return Response(df.to_dict(orient="records"))
+            df = df.apply(lambda x: extract_functional_domain(x, "Domain [FT]"), axis=1)
+            df.fillna("", inplace=True)
+            return Response(df.to_dict(orient="records")[0])
         else:
             return Response(status=404)
 
 
 class VariantViewSets(FiltersMixin, ModelViewSet):
-    queryset = Protein.objects.all()
-    serializer_class = ProteinSerializer
+    queryset = Variant.objects.all()
+    serializer_class = VariantSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_backends = [filters.OrderingFilter,]
     ordering_fields = ["protein", "position", "original", "mutated", "pathogenicity"]
     filter_mappings = {
-        "name": "name__icontains",
-        "protein": "protein__name__icontains",
+        "protein": "protein__name__exact",
         "position": "position__exact",
         "original": "original__exact",
         "mutated": "mutated__exact",

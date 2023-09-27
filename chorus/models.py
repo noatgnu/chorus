@@ -1,3 +1,6 @@
+import uuid
+
+from django.contrib.auth.models import User
 from django.db import models
 
 class Protein(models.Model):
@@ -25,8 +28,24 @@ class Variant(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.protein
+        return f"{self.protein.name} {self.original}{self.position}{self.mutated}"
 
     class Meta:
         ordering = ["id"]
 
+class ChorusSession(models.Model):
+    """
+    class for storing user submitted session data that contains filter condition
+    """
+    user = models.ForeignKey(User, on_delete=models.RESTRICT, related_name="chorus_session", null=True, blank=True)
+    link_id = models.UUIDField(default=uuid.uuid4, editable=False)
+    description = models.TextField()
+    file = models.FileField(upload_to='chorus/files/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.link_id
+
+    class Meta:
+        ordering = ["id"]

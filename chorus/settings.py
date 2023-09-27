@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
+    'django_filters',
     'drf_spectacular',
     'dbbackup',
     'storages',
@@ -54,7 +55,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'request.middleware.RequestMiddleware',
+    #'request.middleware.RequestMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -90,6 +91,18 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+# If POSTGRES_NAME found in environment variables, use postgresql database
+if os.getenv("POSTGRES_NAME"):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('POSTGRES_NAME', 'chorus'),
+            'USER': os.environ.get('POSTGRES_USER', 'admin'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', "testpostgrest"),
+            'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+            'PORT': int(os.environ.get('POSTGRES_PORT', '5432')),
+        }
+    }
 
 
 # Password validation
@@ -156,4 +169,29 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+# CORS
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_EXPOSED_HEADERS = [
+    "Set-Cookie"
+]
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+    "withCredentials",
+    "http_x_xsrf_token"
+]
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:4200',
+    'http://chorus.proteo.info',
+)
 
