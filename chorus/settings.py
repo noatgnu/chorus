@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'chorus.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db/db.sqlite3',
     }
 }
 # If POSTGRES_NAME found in environment variables, use postgresql database
@@ -193,5 +193,6 @@ CORS_ALLOW_HEADERS = [
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:4200',
     'http://chorus.proteo.info',
+    'http://10.201.195.214:4200'
 )
 
