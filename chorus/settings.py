@@ -190,9 +190,4 @@ CORS_ALLOW_HEADERS = [
     "withCredentials",
     "http_x_xsrf_token"
 ]
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:4200',
-    'http://chorus.proteo.info',
-    'http://10.201.195.214:4200'
-)
-
+CORS_ORIGIN_WHITELIST = os.getenv("DJANGO_CORS_ORIGIN_WHITELIST", "http://localhost:4200").split(",")
