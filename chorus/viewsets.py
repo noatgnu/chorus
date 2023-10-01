@@ -72,6 +72,7 @@ class ChorusSessionViewSets(ModelViewSet):
     serializer_class = ChorusSessionSerializer
     permission_classes = (permissions.AllowAny,)
     filter_backends = [filters.OrderingFilter,]
+    lookup_field = 'link_id'
     ordering_fields = ["created_at", "updated_at"]
     filter_mappings = {
         "user": "user__id__exact",
