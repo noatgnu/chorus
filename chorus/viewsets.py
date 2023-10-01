@@ -95,10 +95,7 @@ class ChorusSessionViewSets(ModelViewSet):
         json_data = ChorusSessionSerializer(c, many=False, context={"request": request})
         return Response(json_data.data, status=201)
 
-    @action(methods=["get"], url_path="download/", detail=True, permission_classes=[
-        permissions.AllowAny
-    ])
-    @method_decorator(cache_page(0))
+    @action(methods=["get"], detail=True, permission_classes=[permissions.AllowAny])
     def download(self, request, pk=None, link_id=None, token=None):
         c = self.get_object()
         return Response(data={"url": c.file.url}, status=status.HTTP_200_OK)
