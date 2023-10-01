@@ -7,14 +7,14 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from chorus.filter_schema import protein_query_schema
-from chorus.models import Protein, Variant
-from chorus.serializers import ProteinSerializer, VariantSerializer
+from chorus.filter_schema import protein_query_schema, chorus_session_query_schema
+from chorus.models import Protein, Variant, ChorusSession
+from chorus.serializers import ProteinSerializer, VariantSerializer, ChorusSessionSerializer
 
 from uniprotparser.betaparser import UniprotParser
 
 from chorus.utils import extract_functional_domain
-
+from django.core.files.base import File as djangoFile
 
 class ProteinViewSets(FiltersMixin, ModelViewSet):
     queryset = Protein.objects.all()
@@ -63,3 +63,30 @@ class VariantViewSets(FiltersMixin, ModelViewSet):
         return self.queryset
 
 
+
+class ChorusSessionViewSets(ModelViewSet):
+    queryset = ChorusSession.objects.all()
+    serializer_class = ChorusSessionSerializer
+    permission_classes = (permissions.AllowAny,)
+    filter_backends = [filters.OrderingFilter,]
+    ordering_fields = ["created_at", "updated_at"]
+    filter_mappings = {
+        "user": "user__id__exact",
+        "link_id": "link_id__exact",
+        "id": "id__exact",
+    }
+    filter_validation_schema = chorus_session_query_schema
+
+    def get_queryset(self):
+        return self.queryset
+
+    def create(self, request, *args, **kwargs):
+        c = ChorusSession()
+        if request.user:
+            if request.user.is_authenticated:
+                c.user = request.user
+        c.file.save(f"{str(c.link_id)}.txt",djangoFile(self.request.data['file']))
+        c.description = request.data["description"]
+        c.save()
+        json_data = ChorusSessionSerializer(c, many=False, context={"request": request})
+        return Response(json_data.data, status=201)

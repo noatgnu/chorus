@@ -19,3 +19,11 @@ variant_query_schema = base_query_params_schema.extend(
         "pathogenicity": six.text_type,
     }
 )
+
+chorus_session_query_schema = base_query_params_schema.extend(
+    {
+        "id": IntegerLike(),
+        "user": IntegerLike(),
+        "link_id": six.text_type,
+    }
+)

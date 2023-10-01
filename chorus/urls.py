@@ -18,11 +18,12 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
-from chorus.viewsets import ProteinViewSets, VariantViewSets
+from chorus.viewsets import ProteinViewSets, VariantViewSets, ChorusSessionViewSets
 
 router = routers.DefaultRouter()
 router.register(r'api/protein', ProteinViewSets)
 router.register(r'api/variant', VariantViewSets)
+router.register(r'api/chorus_session', ChorusSessionViewSets)
 urlpatterns = [
     path('', include(router.urls)),
     #ath('admin/', admin.site.urls),

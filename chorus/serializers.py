@@ -1,7 +1,9 @@
+import os
+
 from rest_flex_fields import FlexFieldsModelSerializer
 from rest_framework import serializers
 
-from chorus.models import Protein, Variant
+from chorus.models import Protein, Variant, ChorusSession
 
 
 class ProteinSerializer(FlexFieldsModelSerializer):
@@ -33,3 +35,16 @@ class VariantSerializer(FlexFieldsModelSerializer):
     class Meta:
         model = Variant
         fields = ["id", "protein", "position", "original", "mutated", "score", "pathogenicity"]
+
+
+class ChorusSessionSerializer(FlexFieldsModelSerializer):
+    file = serializers.SerializerMethodField()
+
+    def get_file(self, record):
+        _, filename = os.path.split(record.file.name)
+        return filename
+
+    class Meta:
+        model = ChorusSession
+        fields = ["id", "user", "link_id", "description", "file", "created_at", "updated_at"]
+        lookup_field = "link_id"
