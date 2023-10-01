@@ -4,6 +4,7 @@ import pandas as pd
 from filters.mixins import FiltersMixin
 from rest_framework import permissions, filters
 from rest_framework.decorators import action
+from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -66,6 +67,7 @@ class VariantViewSets(FiltersMixin, ModelViewSet):
 
 class ChorusSessionViewSets(ModelViewSet):
     queryset = ChorusSession.objects.all()
+    parser_classes = [MultiPartParser, JSONParser]
     serializer_class = ChorusSessionSerializer
     permission_classes = (permissions.AllowAny,)
     filter_backends = [filters.OrderingFilter,]
