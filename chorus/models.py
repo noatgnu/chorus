@@ -16,6 +16,7 @@ class Protein(models.Model):
     class Meta:
         ordering = ["id"]
         app_label = "protein_data"
+        db_table = "chorus_protein"
 
 
 class Variant(models.Model):
@@ -29,12 +30,14 @@ class Variant(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
     def __str__(self):
         return f"{self.protein.name} {self.original}{self.position}{self.mutated}"
 
     class Meta:
         ordering = ["id"]
         app_label = "variant_data"
+        db_table = "chorus_variant"
 
 class ChorusSession(models.Model):
     """
