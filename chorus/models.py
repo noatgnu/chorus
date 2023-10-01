@@ -15,6 +15,8 @@ class Protein(models.Model):
 
     class Meta:
         ordering = ["id"]
+        app_label = "protein_data"
+
 
 class Variant(models.Model):
     """class for storing variant data that use protein as key and has 3 other columns storing position, original residue and mutated residue"""
@@ -32,6 +34,7 @@ class Variant(models.Model):
 
     class Meta:
         ordering = ["id"]
+        app_label = "variant_data"
 
 class ChorusSession(models.Model):
     """

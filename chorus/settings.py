@@ -88,25 +88,28 @@ WSGI_APPLICATION = 'chorus.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
+DATABASE_ROUTERS = ['chorus.dbrouter.VariantProteinRouter']
 DATABASES = {
     'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db/other.sqlite3',
+    },
+    'variant': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db/db.sqlite3',
     }
 }
 # If POSTGRES_NAME found in environment variables, use postgresql database
 if os.getenv("POSTGRES_NAME"):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('POSTGRES_NAME', 'chorus'),
-            'USER': os.environ.get('POSTGRES_USER', 'admin'),
-            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', "testpostgrest"),
-            'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
-            'PORT': int(os.environ.get('POSTGRES_PORT', '5432')),
-        }
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_NAME', 'chorus'),
+        'USER': os.environ.get('POSTGRES_USER', 'admin'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', "testpostgrest"),
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'PORT': int(os.environ.get('POSTGRES_PORT', '5432')),
     }
+
 
 
 # Password validation
@@ -195,3 +198,12 @@ CORS_ALLOW_HEADERS = [
     "http_x_xsrf_token"
 ]
 CORS_ORIGIN_WHITELIST = os.getenv("DJANGO_CORS_ORIGIN_WHITELIST", "http://localhost:4200").split(",")
+
+
+STORAGES = {
+    "default": {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"}
+}
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', 'your-spaces-access-key-id')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', 'your-spaces-secret-access-key')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'your-spaces-bucket-name')
+AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL', 'your-spaces-endpoint-url')
